@@ -50,30 +50,15 @@ for x in range(0, imgHeight-2):
 		pixelYPreWitt = ((prewittVertical[0][0] * img[x][y]) + (prewittVertical[0][1] * img[x][y+1]) + (prewittVertical[0][2] * img[x][y+2]) + 
 		(prewittVertical[1][0] * img [x+1][y]) + (prewittVertical[1][1] * img[x+1][y+1]) + (prewittVertical[1][2] * img[x+1][y+2]) + 
 		(prewittVertical[2][0] * img[x+2][y]) + (prewittVertical[2][1] * img[x+2][y+1]) + (prewittVertical[2][2] * img[x+2][y+2]))
-
-		# Finding maximum horizontal edge strength for sobel
-		if (maxHorizontalEdgeStrSobel < pixelXSobel):
-			maxHorizontalEdgeStrSobel = pixelXSobel
-		# Finding maximum vertical edge strength for sobel
-		if (maxVerticalEdgeStrSobel < pixelYSobel):
-			maxVerticalEdgeStrSobel = pixelYSobel
-	 	# Finding maximum horizontal edge strength for Prewitt
-		if (maxHorizontalEdgeStrPrewitt < pixelXPreWitt):
-			maxHorizontalEdgeStrPrewitt = pixelXPreWitt
-		# Finding maximum vertical edge strength for Pewitt
-		if (maxVerticalEdgeStrPrewitt < pixelYPreWitt):
-			maxVerticalEdgeStrPrewitt = pixelYPreWitt
-
 		# Calculating edge strength	
 		edgeStrSobel = math.sqrt((math.pow(abs(pixelXSobel),2)) + ((math.pow(abs(pixelYSobel),2))))
 		edgeStrPewitt = math.sqrt((math.pow(abs(pixelXPreWitt),2)) + ((math.pow(abs(pixelYPreWitt),2))))
-
 		# Finding max edge strength
 		if (maxEdgeStrSobel < edgeStrSobel):
 			maxEdgeStrSobel = edgeStrSobel	
 		# Finding max edge strength
-		if (maxEdgeStrPewitt < edgeStrPewitt):
-			maxEdgeStrPewitt = edgeStrPewitt
+		if (maxEdgeStrPrewitt < edgeStrPewitt):
+			maxEdgeStrPrewitt = edgeStrPewitt
 
 		sobelResults[x+1][y+1] = edgeStrSobel
 		prewittResults[x+1][y+1] = edgeStrPewitt
@@ -83,24 +68,27 @@ cv2.imwrite("example_prewitt.jpg", prewittResults)
 
 # Scaling results to 255
 sobelResults = sobelResults * (255/maxEdgeStrSobel)
-prewittResults = prewittResults * (255/maxEdgeStrPewitt)		
+prewittResults = prewittResults * (255/maxEdgeStrPrewitt)		
 cv2.imwrite("example_sobel_scaled.jpg", sobelResults)
 cv2.imwrite("example_prewitt_scaled.jpg", prewittResults)
 
 #thinning of Sobel and Prewitt edges
+maxHorizontalEdgeStrSobel = maxVerticalEdgeStrSobel = 0
+maxHorizontalEdgeStrPrewitt = maxVerticalEdgeStrPrewitt = 0
 r , c = sobelResults.shape
 sobelResultsThinned = prewittResultsThinned = np.zeros([r,c])
 for rows in range(len(sobelResults)):
+	maxHorizontalEdgeStrSobel = np.max(sobelResults[rows,:])
+	maxHorizontalEdgeStrPrewitt = np.max(prewittResults[rows,:])
 	for columns in range(len(sobelResults[rows])):
-		if (sobelResults[rows][columns] < (maxHorizontalEdgeStrSobel * 255/maxEdgeStrSobel) and sobelResults[rows][columns] < (maxVerticalEdgeStrSobel * 255/maxEdgeStrSobel)):
-			sobelResultsThinned[rows][columns] = 0
-		else:
-			sobelResultsThinned[rows][columns] = sobelResults[rows][columns]	
-		if (prewittResults[rows][columns] < (maxHorizontalEdgeStrPrewitt * 255/maxEdgeStrPewitt) and prewittResults[rows][columns] < (maxVerticalEdgeStrPrewitt * 255/maxEdgeStrPewitt)):
-			prewittResultsThinned[rows][columns] = 0
-		else:
-			prewittResultsThinned[rows][columns] = prewittResults[rows][columns]
-
+		maxVerticalEdgeStrSobel = np.max(sobelResults[:,columns])
+		maxVerticalEdgeStrPrewitt = np.max(prewittResults[:,columns])
+		if ((sobelResults[rows][columns] >= maxHorizontalEdgeStrSobel-20) or (sobelResults[rows][columns] >= maxVerticalEdgeStrSobel-20)):
+			sobelResultsThinned[rows][columns] += sobelResults[rows][columns]
+		if ((prewittResults[rows][columns] >= maxHorizontalEdgeStrPrewitt-20) or (prewittResults[rows][columns] >= maxVerticalEdgeStrPrewitt-20)):
+			prewittResultsThinned[rows][columns] += prewittResults[rows][columns]
+		maxVerticalEdgeStrSobel = maxVerticalEdgeStrPrewitt = 0
+	maxHorizontalEdgeStrSobel = maxHorizontalEdgeStrPrewitt = 0			
 cv2.imwrite("example_sobel_scaled_thinned.jpg", sobelResultsThinned)
 cv2.imwrite("example_prewitt_scaled_thinned.jpg", prewittResultsThinned)			
 				 
