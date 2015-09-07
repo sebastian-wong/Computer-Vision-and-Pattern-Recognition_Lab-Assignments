@@ -16,11 +16,17 @@ sobelVertical = np.array([[1,2,1],[0,0,0],[-1,-2,-1]])
 prewittVertical = np.array([[1,1,1],[0,0,0],[-1,-1,-1]])
 
 img = cv2.imread(os.getcwd() + "/pictures/example.jpg", cv2.CV_LOAD_IMAGE_GRAYSCALE)
+
+cv2.imwrite("grey.jpg", img)	
+
 imgShape = img.shape
 imgHeight = imgShape[0]
 imgWidth = imgShape[1]
 sobelResults = np.zeros([imgHeight,imgWidth])
 prewittResults = np.zeros([imgHeight,imgWidth])
+maxEdgeStrSobel = maxEdgeStrPrewitt = 0
+maxHorizontalEdgeStrSobel = maxVerticalEdgeStrSobel = 0
+maxHorizontalEdgeStrPrewitt = maxVerticalEdgeStrPrewitt = 0
 
 # Filtering
 # for every pixel
@@ -29,44 +35,73 @@ for x in range(0, imgHeight-2):
 		# each matrix placement
 		pixelXSobel = pixelYSobel = pixelXPreWitt = pixelYPreWitt = edgeStrSobel = edgeStrPewitt = 0
 
-		pixelXSobel = (sobelHorizontal[0][0] * img[x][y]) + (sobelHorizontal[0][1] * img[x][y+1]) + (sobelHorizontal[0][2] * img[x][y+2])
-		+ (sobelHorizontal[1][0] * img [x+1][y]) + (sobelHorizontal[1][1] * img[x+1][y+1]) + (sobelHorizontal[1][2] * img[x+1][y+2])
-		+ (sobelHorizontal[2][0] * img[x+2][y]) + (sobelHorizontal[2][1] * img[x+2][y+1]) + (sobelHorizontal[2][2] + img[x+2][y+2])
+		pixelXSobel = ((sobelHorizontal[0][0] * img[x][y]) + (sobelHorizontal[0][1] * img[x][y+1]) + (sobelHorizontal[0][2] * img[x][y+2]) + 
+		(sobelHorizontal[1][0] * img [x+1][y]) + (sobelHorizontal[1][1] * img[x+1][y+1]) + (sobelHorizontal[1][2] * img[x+1][y+2]) + 
+		(sobelHorizontal[2][0] * img[x+2][y]) + (sobelHorizontal[2][1] * img[x+2][y+1]) + (sobelHorizontal[2][2] * img[x+2][y+2]))
 
-		pixelYSobel = (sobelVertical[0][0] * img[x][y]) + (sobelVertical[0][1] * img[x][y+1]) + (sobelVertical[0][2] * img[x][y+2])
-		+ (sobelVertical[1][0] * img [x+1][y]) + (sobelVertical[1][1] * img[x+1][y+1]) + (sobelVertical[1][2] * img[x+1][y+2])
-		+ (sobelVertical[2][0] * img[x+2][y]) + (sobelVertical[2][1] * img[x+2][y+1]) + (sobelVertical[2][2] + img[x+2][y+2])
+		pixelYSobel = ((sobelVertical[0][0] * img[x][y]) + (sobelVertical[0][1] * img[x][y+1]) + (sobelVertical[0][2] * img[x][y+2]) + 
+		(sobelVertical[1][0] * img [x+1][y]) + (sobelVertical[1][1] * img[x+1][y+1]) + (sobelVertical[1][2] * img[x+1][y+2]) + 
+		(sobelVertical[2][0] * img[x+2][y]) + (sobelVertical[2][1] * img[x+2][y+1]) + (sobelVertical[2][2] * img[x+2][y+2]))
 
-		pixelXPreWitt = (prewittHorizontal[0][0] * img[x][y]) + (prewittHorizontal[0][1] * img[x][y+1]) + (prewittHorizontal[0][2] * img[x][y+2])
-		+ (prewittHorizontal[1][0] * img [x+1][y]) + (prewittHorizontal[1][1] * img[x+1][y+1]) + (prewittHorizontal[1][2] * img[x+1][y+2])
-		+ (prewittHorizontal[2][0] * img[x+2][y]) + (prewittHorizontal[2][1] * img[x+2][y+1]) + (prewittHorizontal[2][2] + img[x+2][y+2])
+		pixelXPreWitt = ((prewittHorizontal[0][0] * img[x][y]) + (prewittHorizontal[0][1] * img[x][y+1]) + (prewittHorizontal[0][2] * img[x][y+2]) + 
+		(prewittHorizontal[1][0] * img [x+1][y]) + (prewittHorizontal[1][1] * img[x+1][y+1]) + (prewittHorizontal[1][2] * img[x+1][y+2]) + 
+		(prewittHorizontal[2][0] * img[x+2][y]) + (prewittHorizontal[2][1] * img[x+2][y+1]) + (prewittHorizontal[2][2] * img[x+2][y+2]))
 
-		pixelYPreWitt = (prewittVertical[0][0] * img[x][y]) + (prewittVertical[0][1] * img[x][y+1]) + (prewittVertical[0][2] * img[x][y+2])
-		+ (prewittVertical[1][0] * img [x+1][y]) + (prewittVertical[1][1] * img[x+1][y+1]) + (prewittVertical[1][2] * img[x+1][y+2])
-		+ (prewittVertical[2][0] * img[x+2][y]) + (prewittVertical[2][1] * img[x+2][y+1]) + (prewittVertical[2][2] + img[x+2][y+2])
+		pixelYPreWitt = ((prewittVertical[0][0] * img[x][y]) + (prewittVertical[0][1] * img[x][y+1]) + (prewittVertical[0][2] * img[x][y+2]) + 
+		(prewittVertical[1][0] * img [x+1][y]) + (prewittVertical[1][1] * img[x+1][y+1]) + (prewittVertical[1][2] * img[x+1][y+2]) + 
+		(prewittVertical[2][0] * img[x+2][y]) + (prewittVertical[2][1] * img[x+2][y+1]) + (prewittVertical[2][2] * img[x+2][y+2]))
 
-		#edgeStrSobel = math.sqrt((math.pow(abs(pixelXSobel),2)) + ((math.pow(abs(pixelYSobel),2))))
-		#edgeStrPewitt = math.sqrt((math.pow(abs(pixelXPreWitt),2)) + ((math.pow(abs(pixelYPreWitt),2))))
+		# Finding maximum horizontal edge strength for sobel
+		if (maxHorizontalEdgeStrSobel < pixelXSobel):
+			maxHorizontalEdgeStrSobel = pixelXSobel
+		# Finding maximum vertical edge strength for sobel
+		if (maxVerticalEdgeStrSobel < pixelYSobel):
+			maxVerticalEdgeStrSobel = pixelYSobel
+	 	# Finding maximum horizontal edge strength for Prewitt
+		if (maxHorizontalEdgeStrPrewitt < pixelXPreWitt):
+			maxHorizontalEdgeStrPrewitt = pixelXPreWitt
+		# Finding maximum vertical edge strength for Pewitt
+		if (maxVerticalEdgeStrPrewitt < pixelYPreWitt):
+			maxVerticalEdgeStrPrewitt = pixelYPreWitt
 
+		# Calculating edge strength	
+		edgeStrSobel = math.sqrt((math.pow(abs(pixelXSobel),2)) + ((math.pow(abs(pixelYSobel),2))))
+		edgeStrPewitt = math.sqrt((math.pow(abs(pixelXPreWitt),2)) + ((math.pow(abs(pixelYPreWitt),2))))
 
-		edgeStrSobel = math.sqrt((pixelXSobel**2) + (pixelYSobel**2))
-		edgeStrPewitt = math.sqrt((pixelXPreWitt**2) + (pixelYPreWitt**2))
+		# Finding max edge strength
+		if (maxEdgeStrSobel < edgeStrSobel):
+			maxEdgeStrSobel = edgeStrSobel	
+		# Finding max edge strength
+		if (maxEdgeStrPewitt < edgeStrPewitt):
+			maxEdgeStrPewitt = edgeStrPewitt
+
 		sobelResults[x+1][y+1] = edgeStrSobel
 		prewittResults[x+1][y+1] = edgeStrPewitt
 
-cv2.imwrite("examplesobel.jpg", sobelResults)
-cv2.imwrite("exampleprewitt.jpg", prewittResults)
+cv2.imwrite("example_sobel.jpg", sobelResults)
+cv2.imwrite("example_prewitt.jpg", prewittResults)
 
-#thinning of sobel image
-thinningC, thinningR = sobelResults.shape
-img_thinned = np.zeros((thinningC, thinningR))
-prevIntensity = 0
-curIntensity = 0
-for thinningIndexR in range(0, thinningR):
-    for thinningIndexC in range(0, thinningC):
-        if(thinningIndexC < thinningC-2 and thinningIndexR < thinningR-2):
-            prevIntensity = sobelResults[thinningIndexC, thinningIndexR]
-            curIntensity = sobelResults[thinningIndexC+1, thinningIndexR]
-            if(curIntensity + 15 < prevIntensity):
-                img_thinned[thinningIndexC, thinningIndexR] = prevIntensity
-cv2.imwrite('sobel_thinned.jpg',img_thinned)
+# Scaling results to 255
+sobelResults = sobelResults * (255/maxEdgeStrSobel)
+prewittResults = prewittResults * (255/maxEdgeStrPewitt)		
+cv2.imwrite("example_sobel_scaled.jpg", sobelResults)
+cv2.imwrite("example_prewitt_scaled.jpg", prewittResults)
+
+#thinning of Sobel and Prewitt edges
+r , c = sobelResults.shape
+sobelResultsThinned = prewittResultsThinned = np.zeros([r,c])
+for rows in range(len(sobelResults)):
+	for columns in range(len(sobelResults[rows])):
+		if (sobelResults[rows][columns] < (maxHorizontalEdgeStrSobel * 255/maxEdgeStrSobel) and sobelResults[rows][columns] < (maxVerticalEdgeStrSobel * 255/maxEdgeStrSobel)):
+			sobelResultsThinned[rows][columns] = 0
+		else:
+			sobelResultsThinned[rows][columns] = sobelResults[rows][columns]	
+		if (prewittResults[rows][columns] < (maxHorizontalEdgeStrPrewitt * 255/maxEdgeStrPewitt) and prewittResults[rows][columns] < (maxVerticalEdgeStrPrewitt * 255/maxEdgeStrPewitt)):
+			prewittResultsThinned[rows][columns] = 0
+		else:
+			prewittResultsThinned[rows][columns] = prewittResults[rows][columns]
+
+cv2.imwrite("example_sobel_scaled_thinned.jpg", sobelResultsThinned)
+cv2.imwrite("example_prewitt_scaled_thinned.jpg", prewittResultsThinned)			
+				 
+
