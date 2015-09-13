@@ -63,16 +63,55 @@ def hsvToRgb(hsvImage):
                 red = C
                 blue = X    
             rgbImage[r,c] = [(blue + m) * 255, (green + m) * 255, (red + m) * 255]
-    return rgbImage                                    
-                                       
-imgFlower = cv2.imread(os.getcwd() + "/Pictures/flower.jpg")  
+    return rgbImage
+    
+def histogramEqualization(image):
+    image = image.astype(int)
+    hist,bins = np.histogram(image.flatten(),256,[0,256])
+    cdf = hist.cumsum()
+    cdfMasked = np.ma.masked_equal(cdf,0)
+    cdfMasked = (cdfMasked - cdfMasked.min())*255/(cdfMasked.max()-cdfMasked.min())
+    cdf = np.ma.filled(cdfMasked,0).astype('uint8')
+    imgEqualized = cdf[image]
+    return imgEqualized
+    
+    
+# Reading flower image                                       
+imgFlower = cv2.imread(os.getcwd() + "/Pictures/flower.jpg")
+# Converting flower from rgb colour space to hsv  
 hsvFlower = rgbToHsv(imgFlower)
+
+# imshow expects [0,1] for floating point and [0,255] for unsigned chars
+# imwrite always expects [0,255]
+
+# divide by 360 to normalise to [0,1]
+cv2.imshow('hue component', hsvFlower[:,:,0]/360.0)
+cv2.waitKey(0)
 cv2.imwrite( os.getcwd()+ '/Results/hue.jpg', hsvFlower[:,:,0])
-#cv2.imshow('hue',HSV[:,0])
+
+cv2.imshow('saturation component', hsvFlower[:,:,1])
+cv2.waitKey(0)
 cv2.imwrite( os.getcwd()+ '/Results/saturation.jpg', hsvFlower[:,:,1]*255.0)
+
+cv2.imshow('brightness component', hsvFlower[:,:,2])
+cv2.waitKey(0)
 cv2.imwrite( os.getcwd()+ '/Results/brightness.jpg', hsvFlower[:,:,2]*255.0)
+
+cv2.destroyAllWindows()
+# Converting flower from hsv colour space to rgb
 rgbFlower = hsvToRgb(hsvFlower)
 cv2.imwrite( os.getcwd()+ '/Results/hsv2rgb.jpg', rgbFlower)
+# Reading in bee image
+imgBee = cv2.imread(os.getcwd() + "/Pictures/bee1.png")
+# Converting bee from rgb colour space to hsv
+hsvBee = rgbToHsv(imgBee)
+valueComponent = hsvBee[:,:,2]*255.0
+hsvBee[:,:,2] = (histogramEqualization(valueComponent))/255.0
+rgbBee = hsvToRgb(hsvBee)
+cv2.imwrite(os.getcwd() + "/Results/histeq.jpg", rgbBee)
+
+
+
 
 
 
