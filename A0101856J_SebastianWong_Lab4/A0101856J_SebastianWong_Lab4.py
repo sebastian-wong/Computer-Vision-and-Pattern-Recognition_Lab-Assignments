@@ -87,7 +87,7 @@ hsvFlower = rgbToHsv(imgFlower)
 # divide by 360 to normalise to [0,1]
 cv2.imshow('hue component', hsvFlower[:,:,0]/360.0)
 cv2.waitKey(0)
-cv2.imwrite( os.getcwd()+ '/Results/hue.jpg', hsvFlower[:,:,0])
+cv2.imwrite( os.getcwd()+ '/Results/hue.jpg', hsvFlower[:,:,0] * 225.0/360.0)
 
 cv2.imshow('saturation component', hsvFlower[:,:,1])
 cv2.waitKey(0)
