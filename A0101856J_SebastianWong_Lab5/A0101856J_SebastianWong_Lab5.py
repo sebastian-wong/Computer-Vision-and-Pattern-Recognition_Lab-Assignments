@@ -107,19 +107,35 @@ def filterResponse(responseArray,threshold):
             if (responseArray[row][column] < 0.1*(threshold)):
                 responseArray[row][column] = 0
     return responseArray            
-                                    
+
+def plotHarrisCornerResponse(image, responses):
+    plt.figure()
+    height, width = image.shape
+    #plt.autoscale(False)
+    plt.imshow(image, cmap='gray')
+    #plt.imshow(image,extent = (0,width,0,height), cmap='gray')
+    plt.hold(True)
+    rows,columns = responses.shape
+    for row in range(0,rows):
+        for column in range(0,columns):
+            if (responses[row][column] != 0):
+                plt.autoscale(False)
+                plt.scatter(row,column,color='blue')     
+    plt.show()
                                 
-# Reading image
+# Reading image in grayscale for processing
 img = cv2.imread(os.getcwd() + "/Pictures/building1.png", cv2.CV_LOAD_IMAGE_GRAYSCALE)
 gx , gy = getEdgeStrength(img)
 I_xx, I_xy, I_yy = productOfDerivatives(gx,gy)
 gaussianKernel = gauss_kernels(3,1)
 W_xx, W_xy, W_yy = convolution(I_xx,I_xy,I_yy,gaussianKernel)
 harrisCornerReponse , maxResponse = computeHarrisCornerResponse(W_xx,W_xy,W_yy)
-filteredHarrisCornerxx = filterResponse(harrisCornerReponse,maxResponse)
-filteredHarrisCorner = (filterResponse(harrisCornerReponse,maxResponse) * (255/maxResponse))
+filteredHarrisCorner = filterResponse(harrisCornerReponse,maxResponse)
+#filteredHarrisCorner = (filterResponse(harrisCornerReponse,maxResponse) * (255/maxResponse))
 cv2.imwrite(os.getcwd() + "/Results/building1.png", filteredHarrisCorner)
-cv2.imwrite(os.getcwd() + "/Results/building1nonorm.png", filteredHarrisCornerxx)
+#cv2.imwrite(os.getcwd() + "/Results/building1nonorm.png", filteredHarrisCornerxx)
+plotHarrisCornerResponse(img,filteredHarrisCorner)
+
 
 
 
