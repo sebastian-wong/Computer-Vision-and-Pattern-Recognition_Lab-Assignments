@@ -109,33 +109,55 @@ def filterResponse(responseArray,threshold):
     return responseArray            
 
 def plotHarrisCornerResponse(image, responses):
-    plt.figure()
-    height, width = image.shape
-    #plt.autoscale(False)
-    plt.imshow(image, cmap='gray')
-    #plt.imshow(image,extent = (0,width,0,height), cmap='gray')
-    plt.hold(True)
-    rows,columns = responses.shape
-    for row in range(0,rows):
-        for column in range(0,columns):
+    height, width, channels = image.shape
+    blue = np.array([255,0,255])
+    for row in range(0,height):
+        for column in range(0,width):
             if (responses[row][column] != 0):
-                plt.autoscale(False)
-                plt.scatter(row,column,color='blue')     
+                 image[row][column] = blue       
+    plt.figure()
+    plt.imshow(image)        
     plt.show()
-                                
+    return image            
+
+def bgrToRgb(image):
+    height, width, channels = image.shape
+    newImage = np.zeros([height,width,channels])
+    for row in range(0,height):
+        for column in range(0,width):
+            newImage[row][column][0] = image[row][column][2]
+            newImage[row][column][1] = image[row][column][1]
+            newImage[row][column][2] = image[row][column][0]
+    newImage = newImage.astype(np.uint8)                    
+    return newImage
+
+def rgbToBgr(image):
+    height, width, channels = image.shape
+    newImage = np.zeros([height,width,channels])
+    for row in range(0,height):
+        for column in range(0,width):
+            newImage[row][column][0] = image[row][column][2]
+            newImage[row][column][1] = image[row][column][1]
+            newImage[row][column][2] = image[row][column][0]
+    newImage = newImage.astype(np.uint8)                    
+    return newImage            
+                                            
+# Reading in original image
+imgColoured = cv2.imread(os.getcwd() + "/Pictures/building2.png")                                            
 # Reading image in grayscale for processing
-img = cv2.imread(os.getcwd() + "/Pictures/building1.png", cv2.CV_LOAD_IMAGE_GRAYSCALE)
+img = cv2.imread(os.getcwd() + "/Pictures/building2.png", cv2.CV_LOAD_IMAGE_GRAYSCALE)
 gx , gy = getEdgeStrength(img)
 I_xx, I_xy, I_yy = productOfDerivatives(gx,gy)
 gaussianKernel = gauss_kernels(3,1)
 W_xx, W_xy, W_yy = convolution(I_xx,I_xy,I_yy,gaussianKernel)
 harrisCornerReponse , maxResponse = computeHarrisCornerResponse(W_xx,W_xy,W_yy)
 filteredHarrisCorner = filterResponse(harrisCornerReponse,maxResponse)
-#filteredHarrisCorner = (filterResponse(harrisCornerReponse,maxResponse) * (255/maxResponse))
-cv2.imwrite(os.getcwd() + "/Results/building1.png", filteredHarrisCorner)
-#cv2.imwrite(os.getcwd() + "/Results/building1nonorm.png", filteredHarrisCornerxx)
-plotHarrisCornerResponse(img,filteredHarrisCorner)
-
+# Convert BGR to RGB for plt.show()
+rgbImg = bgrToRgb(imgColoured)
+result = plotHarrisCornerResponse(rgbImg,filteredHarrisCorner)
+# Convert back to BGR for saving
+result = rgbToBgr(result)
+cv2.imwrite(os.getcwd() + "/Results/building2.png", result)
 
 
 
