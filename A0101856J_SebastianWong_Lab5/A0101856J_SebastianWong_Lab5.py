@@ -110,11 +110,11 @@ def filterResponse(responseArray,threshold):
 
 def plotHarrisCornerResponse(image, responses):
     height, width, channels = image.shape
-    blue = np.array([255,0,255])
+    magentaMarks = np.array([255,0,255])
     for row in range(0,height):
         for column in range(0,width):
             if (responses[row][column] != 0):
-                 image[row][column] = blue       
+                 image[row][column] = magentaMarks       
     plt.figure()
     plt.imshow(image)        
     plt.show()
