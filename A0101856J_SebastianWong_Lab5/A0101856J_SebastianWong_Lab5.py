@@ -123,24 +123,20 @@ def plotHarrisCornerResponse(image, responses):
 def bgrToRgb(image):
     height, width, channels = image.shape
     newImage = np.zeros([height,width,channels])
-    for row in range(0,height):
-        for column in range(0,width):
-            newImage[row][column][0] = image[row][column][2]
-            newImage[row][column][1] = image[row][column][1]
-            newImage[row][column][2] = image[row][column][0]
+    newImage[:,:,0] = image[:,:,2]
+    newImage[:,:,1] = image[:,:,1]     
+    newImage[:,:,2] = image[:,:,0]
     newImage = newImage.astype(np.uint8)                    
     return newImage
-
+    
 def rgbToBgr(image):
     height, width, channels = image.shape
     newImage = np.zeros([height,width,channels])
-    for row in range(0,height):
-        for column in range(0,width):
-            newImage[row][column][0] = image[row][column][2]
-            newImage[row][column][1] = image[row][column][1]
-            newImage[row][column][2] = image[row][column][0]
+    newImage[:,:,0] = image[:,:,2]
+    newImage[:,:,1] = image[:,:,1]     
+    newImage[:,:,2] = image[:,:,0]
     newImage = newImage.astype(np.uint8)                    
-    return newImage            
+    return newImage         
                                             
 # Reading in original image
 imgColoured = cv2.imread(os.getcwd() + "/Pictures/building2.png")                                            
