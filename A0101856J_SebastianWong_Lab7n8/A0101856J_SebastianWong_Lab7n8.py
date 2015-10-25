@@ -88,8 +88,8 @@ def determiningHomographyMatrix(points,projectionPts,pointsToUse):
         vc = projectionPts[index][1].item(0)
         up = points[index][0]
         vp = points[index][1]
-        row1 = np.array([up,vp,1,0,0,0,-(uc)*up,-(uc)*vp,-uc])
-        row2 = np.array([0,0,0,up,vp,1,-(vc)*up,-(vc)*vp,-vc])
+        row1 = np.array([up,vp,1,0,0,0,(-uc)*up,(-uc)*vp,-uc])
+        row2 = np.array([0,0,0,up,vp,1,(-vc)*up,(-vc)*vp,-vc])
         findHomography.append(row1)
         findHomography.append(row2)
     return findHomography
@@ -155,7 +155,9 @@ findHomography = determiningHomographyMatrix(pts,perspectiveProjectionFrame3,poi
 u,s,v = la.svd(findHomography)
 rows, columns = v.shape
 homography = v[rows-1]/v[rows-1][columns-1]
-print homography
+homographyMatrix = (np.matrix(homography)).reshape((3,3))
+np.set_printoptions(suppress = True)
+print homographyMatrix
 
     
     
