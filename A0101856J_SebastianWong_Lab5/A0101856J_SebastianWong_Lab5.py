@@ -139,9 +139,9 @@ def rgbToBgr(image):
     return newImage         
                                             
 # Reading in original image
-imgColoured = cv2.imread(os.getcwd() + "/Pictures/checker.jpg")                                            
+imgColoured = cv2.imread(os.getcwd() + "/Pictures/stitched.jpg")                                            
 # Reading image in grayscale for processing
-img = cv2.imread(os.getcwd() + "/Pictures/checker.jpg", cv2.CV_LOAD_IMAGE_GRAYSCALE)
+img = cv2.imread(os.getcwd() + "/Pictures/stitched.jpg", cv2.CV_LOAD_IMAGE_GRAYSCALE)
 gx , gy = getEdgeStrength(img)
 I_xx, I_xy, I_yy = productOfDerivatives(gx,gy)
 gaussianKernel = gauss_kernels(3,1)
@@ -153,7 +153,7 @@ rgbImg = bgrToRgb(imgColoured)
 result = plotHarrisCornerResponse(rgbImg,filteredHarrisCorner)
 # Convert back to BGR for saving
 result = rgbToBgr(result)
-cv2.imwrite(os.getcwd() + "/Results/checker.jpg", result)
+cv2.imwrite(os.getcwd() + "/Results/stitched1.jpg", result)
 
 
 
